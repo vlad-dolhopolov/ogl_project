@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="GLSH_Camera.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="GLSH_Image.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="GLSH_Math.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="GLSH_Mesh.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="GLSH_Prefabs.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="GLSH_Shaders.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="GLSH_System.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="GLSH_Text.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="GLSH_Texture.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="GLSH_Util.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="GLSH_Vertex.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxml2.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="Util.cpp" />
+    <ClCompile Include="Game2.cpp" />
+    <ClCompile Include="Scene.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CircularListSelector.h" />
+    <ClInclude Include="GLSH.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="GLSH_Camera.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="GLSH_Image.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="GLSH_Math.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="GLSH_Mesh.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="GLSH_Prefabs.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="GLSH_Shaders.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="GLSH_System.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="GLSH_Text.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="GLSH_Texture.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="GLSH_Util.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="GLSH_Vertex.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="tinyxml2.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="Util.h" />
+    <ClInclude Include="Game2.h" />
+    <ClInclude Include="Scene.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\TexNoLight-vs.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\TexNoLight-fs.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\TexTintNoLight-fs.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\ucolor-fs.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\ucolor-vs.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\TexDirLight-fs.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\TexDirLight-vs.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\vcolor-fs.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\vcolor-vs.glsl">
+      <Filter>shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{16b62f6e-4142-4559-8d9d-6cbb99e24eee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine">
+      <UniqueIdentifier>{5a3564f7-6c75-425a-aae5-9a925fae5fc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="config">
+      <UniqueIdentifier>{4a14995d-1354-4c68-8641-60f11c6d97e7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="textures\cube_textures.txt">
+      <Filter>config</Filter>
+    </Text>
+    <Text Include="textures\ground_textures.txt">
+      <Filter>config</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

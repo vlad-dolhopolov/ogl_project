@@ -1,8 +1,8 @@
-#include "glsh\Game.h"
+#include "Scene.h"
 
 int main()
 {
-    Game game;
+   Scene scene;
 
-	glsh::System::Run(game, "Enter the Matrix", 800, 600);
+   glsh::System::Run(scene, "Hello, world", 800, 600);
 }
