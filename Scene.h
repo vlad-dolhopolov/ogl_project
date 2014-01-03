@@ -3,7 +3,7 @@
 
 #include "GLSH.h"
 
-#include "Game2.h"
+#include "MatrixTexture.h"
 
 #include <vector>
 
@@ -21,9 +21,8 @@ class Scene : public glsh::App {
 
     GLuint                  mSampler;   
 
-    Game2*                  mGame2;     
+    MatrixTexture*          mMatrixGenerator;     
     bool                    mGame2Paused;
-    bool                    mNeedGame2Render;	
 
     GLsizei                 mFBOWidth, mFBOHeight;
     GLuint                  mFBO;

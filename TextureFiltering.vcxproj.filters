@@ -38,13 +38,16 @@
     <ClCompile Include="tinyxml2.cpp">
       <Filter>engine</Filter>
     </ClCompile>
-    <ClCompile Include="TextureManager.cpp" />
-    <ClCompile Include="Util.cpp" />
-    <ClCompile Include="Game2.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="MatrixTexture.cpp" />
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Util.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CircularListSelector.h" />
     <ClInclude Include="GLSH.h">
       <Filter>engine</Filter>
     </ClInclude>
@@ -84,10 +87,14 @@
     <ClInclude Include="tinyxml2.h">
       <Filter>engine</Filter>
     </ClInclude>
-    <ClInclude Include="TextureManager.h" />
-    <ClInclude Include="Util.h" />
-    <ClInclude Include="Game2.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="MatrixTexture.h" />
+    <ClInclude Include="TextureManager.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Util.h">
+      <Filter>engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\TexNoLight-vs.glsl">
@@ -125,16 +132,5 @@
     <Filter Include="engine">
       <UniqueIdentifier>{5a3564f7-6c75-425a-aae5-9a925fae5fc6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="config">
-      <UniqueIdentifier>{4a14995d-1354-4c68-8641-60f11c6d97e7}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="textures\cube_textures.txt">
-      <Filter>config</Filter>
-    </Text>
-    <Text Include="textures\ground_textures.txt">
-      <Filter>config</Filter>
-    </Text>
   </ItemGroup>
 </Project>

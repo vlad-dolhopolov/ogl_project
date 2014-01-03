@@ -10,9 +10,8 @@ Scene::Scene()
     : mTexProgram(0)
     , mCamera(NULL)
     , mSampler(0)
-    , mGame2(NULL)
+    , mMatrixGenerator(NULL)
     , mGame2Paused(false)
-    , mNeedGame2Render(true)
 {
 }
 
@@ -44,40 +43,40 @@ void Scene::initialize(int w, int h)
     mCamera->lookAt(0, 5.0f, 0);
     mCamera->setSpeed(2.0f);
 
-    
-    mGame2 = new Game2;
-    mGame2->initialize(mFBOWidth, mFBOHeight);
-    mGame2->resize(mFBOWidth, mFBOHeight);
 
 	//
     // Create texture to render Game2 into and attach it to a Framebuffer Object
     //
-    {
-        mFBOWidth = 256;
-        mFBOHeight = 256;
+    mFBOWidth = 256;
+    mFBOHeight = 256;
 
-        // create texture
-        glGenTextures(1, &mMatrixTex);
-        glBindTexture(GL_TEXTURE_2D, mMatrixTex);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, mFBOWidth, mFBOHeight,
-                     0, GL_RGB, GL_UNSIGNED_BYTE, NULL);            // allocate texture without sending any data
+    // create texture
+    glGenTextures(1, &mMatrixTex);
+    glBindTexture(GL_TEXTURE_2D, mMatrixTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, mFBOWidth, mFBOHeight,
+                    0, GL_RGB, GL_UNSIGNED_BYTE, NULL);            // allocate texture without sending any data
 
-        // only one valid mipmap level for now
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+    // only one valid mipmap level for now
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
 
-        // create framebuffer object
-        glGenFramebuffers(1, &mFBO);
-        glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mMatrixTex, 0);  // set framebuffer texture
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);  // unbind for now
-    }
+    // create framebuffer object
+    glGenFramebuffers(1, &mFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mMatrixTex, 0);  // set framebuffer texture
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);  // unbind for now
+    
+
+	mMatrixGenerator = new MatrixTexture;
+    mMatrixGenerator->initialize(mFBOWidth, mFBOHeight);
+	mMatrixGenerator->resize(mFBOWidth, mFBOHeight);
+
 }
 
 void Scene::shutdown()
 {
-    mGame2->shutdown();
-    delete mGame2;
+    mMatrixGenerator->shutdown();
+    delete mMatrixGenerator;
 
     // FIXME: cleanup
 }
@@ -85,7 +84,7 @@ void Scene::shutdown()
 void Scene::resize(int w, int h)
 {
     // set viewport (subrect of screen to draw on)
-    //glViewport(0, 0, w, h);
+    glViewport(0, 0, w, h);
 
     mCamera->setViewportSize(w, h); 
 }
@@ -95,20 +94,17 @@ void Scene::draw()
     //
     // render to texture, if needed
     //
-    if (mNeedGame2Render) {
+    glDisable(GL_MULTISAMPLE);  // our FBO doesn't support multisampling
 
-        glDisable(GL_MULTISAMPLE);  // our FBO doesn't support multisampling
+    glBindFramebuffer(GL_FRAMEBUFFER, mFBO);    // bind framebuffer object (FBO)
+    glViewport(0, 0, mFBOWidth, mFBOHeight);    // match viewport to FBO size
+    mMatrixGenerator->draw();                        // render to FBO
 
-        glBindFramebuffer(GL_FRAMEBUFFER, mFBO);    // bind framebuffer object (FBO)
-        glViewport(0, 0, mFBOWidth, mFBOHeight);    // match viewport to FBO size
-        mGame2->draw();                             // render to FBO
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);       // unbind FBO
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);       // unbind FBO
-
-        // generate mipmaps for rendered texture
-		glBindTexture(GL_TEXTURE_2D, mMatrixTex);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
+    // generate mipmaps for rendered texture
+	glBindTexture(GL_TEXTURE_2D, mMatrixTex);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     glViewport(0, 0, getWindow()->getWidth(), getWindow()->getHeight());
 
@@ -131,7 +127,6 @@ void Scene::draw()
     glUseProgram(mTexProgram);
 
     glsh::SetShaderUniformInt("u_TexSampler", 0);
-
     glsh::SetShaderUniform("u_ProjectionMatrix", projMatrix);
 
     // set lighting parameters
@@ -145,8 +140,12 @@ void Scene::draw()
     //
     // draw cube
     //
-    glSamplerParameteri(mSampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);    
-    glSamplerParameteri(mSampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);    
+    //glSamplerParameteri(mSampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);    
+    //glSamplerParameteri(mSampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
+
+	
+    glSamplerParameteri(mSampler, GL_TEXTURE_WRAP_S, GL_REPEAT);    
+    glSamplerParameteri(mSampler, GL_TEXTURE_WRAP_T, GL_REPEAT);    
 
     glBindTexture(GL_TEXTURE_2D, mMatrixTex);
 
@@ -167,7 +166,7 @@ bool Scene::update(float dt)
         return false; // request to exit
     }
     
-    mGame2->update(dt);
+    mMatrixGenerator->update(dt);
 
     //
     // Pitch and yaw in local space.
@@ -247,4 +246,3 @@ bool Scene::update(float dt)
 
     return true; // request to keep going
 }
-

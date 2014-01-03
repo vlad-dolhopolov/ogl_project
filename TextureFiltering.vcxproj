@@ -79,7 +79,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Game2.cpp" />
+    <ClCompile Include="MatrixTexture.cpp" />
     <ClCompile Include="GLSH_Camera.cpp" />
     <ClCompile Include="GLSH_Image.cpp" />
     <ClCompile Include="GLSH_Math.cpp" />
@@ -97,9 +97,8 @@
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CircularListSelector.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="Game2.h" />
+    <ClInclude Include="MatrixTexture.h" />
     <ClInclude Include="GLSH.h" />
     <ClInclude Include="GLSH_Camera.h" />
     <ClInclude Include="GLSH_Image.h" />
@@ -126,10 +125,6 @@
     <None Include="shaders\ucolor-vs.glsl" />
     <None Include="shaders\vcolor-fs.glsl" />
     <None Include="shaders\vcolor-vs.glsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="textures\cube_textures.txt" />
-    <Text Include="textures\ground_textures.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
