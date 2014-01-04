@@ -8,17 +8,17 @@ class MatrixTexture : public glsh::App {
 	GLuint					mTextTintProgram;
 
 	glsh::Font*             mFont;
-
 	glsh::TextBatch         mTextBatch;
 
 	GLuint                  mSampler;
 
-	float                   mScrWidth, mScrHeight;
+	float                   mScrWidth;
+	float					mScrHeight;
 
-	void					DrawTextArea(const glsh::TextBatch& textBatch,
-                                         const glm::vec2& pos,  // position of top-left corner in screen space
-                                         const glm::vec4& textColor);
-    
+	int						mSymTableWidth;
+	int						mSymTableHeight;
+	char**					mSymbolTable;
+	
 public:
                             MatrixTexture();
                             ~MatrixTexture();
@@ -28,6 +28,12 @@ public:
     void                    resize(int w, int h)        override;
     void                    draw()                      override;
     bool                    update(float dt)            override;
+
+private:
+	void					DrawTextArea(const glsh::TextBatch& textBatch,
+                                         const glm::vec2& pos,  // position of top-left corner in screen space
+                                         const glm::vec4& textColor);
+    
 };
 
 #endif

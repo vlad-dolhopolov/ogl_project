@@ -4,11 +4,19 @@ MatrixTexture::MatrixTexture()
 	: mTextTintProgram(0)
 	, mFont(nullptr)
 	, mSampler(0)
+	, mSymTableWidth(0)
+	, mSymTableHeight(0)
+	, mSymbolTable(nullptr)
 {
 }
 
 MatrixTexture::~MatrixTexture()
 {
+	for (int i = 0; i < mSymTableHeight; i++)
+	{
+		delete [] mSymbolTable[i];
+	}
+	delete [] mSymbolTable;
 }
 
 void MatrixTexture::initialize(int w, int h)
@@ -27,41 +35,29 @@ void MatrixTexture::initialize(int w, int h)
 
 	glGenSamplers(1, &mSampler);
 
-	mFont = glsh::CreateFont("fonts/Consolas13");
+	mFont = glsh::CreateFont("fonts/Consolas15");
 
-	//
-    // create help panel
-    //
-    std::string helpStr;
-    helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
-	helpStr += "aroundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMovearoundMove\n";
+    // create symbol table
+	mSymTableWidth = w / (int)mFont->getWidth();
+	mSymTableHeight = h / (int)mFont->getHeight();
 
-    mTextBatch.SetText(mFont, helpStr, true);
+	mSymbolTable = new char*[mSymTableHeight];
+	for (int i = 0; i < mSymTableHeight; i++)
+	{
+		mSymbolTable[i] = new char[mSymTableWidth];
+	}
+
+	std::string str;
+	for (int i = 0; i < mSymTableHeight; i++)
+	{
+		for (int j = 0; j < mSymTableWidth; j++)
+		{
+			str += mSymbolTable[i][j] = 'x';
+		}
+		str += "\n";
+	}
+
+    mTextBatch.SetText(mFont, str, true);
 
 	glsh::InitRandom();  // initialize random number generator
 
