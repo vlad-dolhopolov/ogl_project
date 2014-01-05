@@ -95,6 +95,7 @@
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="Util.cpp" />
+    <ClCompile Include="Wavefront.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene.h" />
@@ -114,6 +115,7 @@
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="Util.h" />
+    <ClInclude Include="Wavefront.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\TexDirLight-fs.glsl" />

@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include "Util.h"
+#include "Wavefront.h"
 
 #include <fstream>
 #include <string>
@@ -34,7 +35,8 @@ void Scene::initialize(int w, int h)
     mTexTintProgram = glsh::BuildShaderProgram("shaders/TexNoLight-vs.glsl", "shaders/TexTintNoLight-fs.glsl");
 
     // create mesh geometry
-    mMesh = glsh::CreateTexturedCube(5.0f);
+    //mMesh = glsh::CreateTexturedCube(5.0f);
+	mMesh = LoadWavefrontOBJ("models/hall.obj");
 
     glGenSamplers(1, &mSampler);
 

@@ -46,6 +46,7 @@
     <ClCompile Include="Util.cpp">
       <Filter>engine</Filter>
     </ClCompile>
+    <ClCompile Include="Wavefront.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLSH.h">
@@ -95,6 +96,7 @@
     <ClInclude Include="Util.h">
       <Filter>engine</Filter>
     </ClInclude>
+    <ClInclude Include="Wavefront.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\TexNoLight-vs.glsl">
