@@ -25,26 +25,86 @@ void Scene::initialize(int w, int h)
     // set screen clearing color
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
-    glEnable(GL_DEPTH_TEST);    // !!!!!!111!!1!!!11!^&#(!@^(!!!!!!
+    glEnable(GL_DEPTH_TEST);
 
     glEnable(GL_CULL_FACE);
 
     // load shaders
     mUColorProgram = glsh::BuildShaderProgram("shaders/ucolor-vs.glsl", "shaders/ucolor-fs.glsl");
-    mTexProgram = glsh::BuildShaderProgram("shaders/TexDirLight-vs.glsl", "shaders/TexDirLight-fs.glsl");
+    mTexProgram = glsh::BuildShaderProgram("shaders/TexNoLight-vs.glsl", "shaders/TexNoLight-fs.glsl");
     mTexTintProgram = glsh::BuildShaderProgram("shaders/TexNoLight-vs.glsl", "shaders/TexTintNoLight-fs.glsl");
 
     // create mesh geometry
-    //mMesh = glsh::CreateTexturedCube(5.0f);
-	mMesh = LoadWavefrontOBJ("models/hall.obj");
+	//mMesh = glsh::CreateTexturedCube(5.0f);
+
+	std::vector<glsh::VPNT> vertices;
+	float unitLength = 2.5f; // lenght of the side of one quad
+	float hallWidth = 7.5f; // width of the hall
+
+	// far wall
+	for (int i = 0; i < 4; i+=2) {
+		vertices.push_back(glsh::VPNT(-unitLength - unitLength * i, -unitLength, 0.0f, 0, 0, 1, 0, 0));
+		vertices.push_back(glsh::VPNT(unitLength - unitLength * i, -unitLength, 0.0f, 0, 0, 1, 1, 0));
+		vertices.push_back(glsh::VPNT(-unitLength - unitLength * i, unitLength, 0.0f, 0, 0, 1, 0, 1));
+		vertices.push_back(glsh::VPNT(unitLength - unitLength * i, unitLength, 0.0f, 0, 0, 1, 1, 1));
+
+		mMeshes.push_back(glsh::CreateMesh(GL_TRIANGLE_STRIP, vertices));
+		vertices.clear();
+	}
+
+	// right wall
+	for (int i = 0; i < 4; i+=2) {
+		vertices.push_back(glsh::VPNT(unitLength, -unitLength, -unitLength - unitLength * i + hallWidth, -1, 0, 0, 0, 0));
+		vertices.push_back(glsh::VPNT(unitLength, -unitLength, unitLength - unitLength * i + hallWidth, -1, 0, 0, 1, 0));
+		vertices.push_back(glsh::VPNT(unitLength, unitLength, -unitLength - unitLength * i + hallWidth, -1, 0, 0, 0, 1));
+		vertices.push_back(glsh::VPNT(unitLength, unitLength, unitLength - unitLength * i + hallWidth, -1, 0, 0, 1, 1));
+
+		mMeshes.push_back(glsh::CreateMesh(GL_TRIANGLE_STRIP, vertices));
+		vertices.clear();
+	}
+
+	// left wall
+	for (int i = 0; i < 4; i+=2) {
+		vertices.push_back(glsh::VPNT(-hallWidth, -unitLength, unitLength - unitLength * i + hallWidth, 1, 0, 0, 0, 0));
+		vertices.push_back(glsh::VPNT(-hallWidth, -unitLength, -unitLength - unitLength * i + hallWidth, 1, 0, 0, 1, 0));
+		vertices.push_back(glsh::VPNT(-hallWidth, unitLength, unitLength - unitLength * i + hallWidth, 1, 0, 0, 0, 1));
+		vertices.push_back(glsh::VPNT(-hallWidth, unitLength, -unitLength - unitLength * i + hallWidth, 1, 0, 0, 1, 1));
+
+		mMeshes.push_back(glsh::CreateMesh(GL_TRIANGLE_STRIP, vertices));
+		vertices.clear();
+	}
+
+	// floor
+	for (int i = 0; i < 4; i+=2) {
+		for(int j = 0; j < 4; j+=2) {
+			vertices.push_back(glsh::VPNT(-hallWidth + unitLength * i, -unitLength, 2 * unitLength + unitLength * j, 0, 1, 0, 0, 0));
+			vertices.push_back(glsh::VPNT(-unitLength + unitLength * i, -unitLength, 2 * unitLength + unitLength * j, 0, 1, 0, 1, 0));
+			vertices.push_back(glsh::VPNT(-hallWidth + unitLength * i, -unitLength, 0.0f + unitLength * j, 0, 1, 0, 0, 1));
+			vertices.push_back(glsh::VPNT(-unitLength + unitLength * i, -unitLength, 0.0f + unitLength * j, 0, 1, 0, 1, 1));
+			mMeshes.push_back(glsh::CreateMesh(GL_TRIANGLE_STRIP, vertices));
+			vertices.clear();
+		}
+	}
+
+	// ceeling
+	for (int i = 0; i < 4; i+=2) {
+		for(int j = 0; j < 4; j+=2) {
+			vertices.push_back(glsh::VPNT(-hallWidth + unitLength * i, unitLength, 0.0f + unitLength * j, 0, -1, 0, 0, 0));
+			vertices.push_back(glsh::VPNT(-unitLength + unitLength * i, unitLength, 0.0f + unitLength * j, 0, -1, 0, 1, 0));
+			vertices.push_back(glsh::VPNT(-hallWidth + unitLength * i, unitLength, 2 * unitLength + unitLength * j, 0, -1, 0, 0, 1));
+			vertices.push_back(glsh::VPNT(-unitLength + unitLength * i, unitLength, 2 * unitLength + unitLength * j, 0, -1, 0, 1, 1));
+
+			mMeshes.push_back(glsh::CreateMesh(GL_TRIANGLE_STRIP, vertices));
+			vertices.clear();
+		}
+	}
 
     glGenSamplers(1, &mSampler);
 
     mCamera = new glsh::FreeLookCamera(this);
-    mCamera->setPosition(0, 5.0f, 10.0f);
-    mCamera->lookAt(0, 5.0f, 0);
+    mCamera->setPosition(-2.5, 0.0f, 17.5f);
+    mCamera->lookAt(-2.5, 0.0f, 0);
     mCamera->setSpeed(2.0f);
-
 
 	//
     // Create texture to render Game2 into and attach it to a Framebuffer Object
@@ -72,7 +132,6 @@ void Scene::initialize(int w, int h)
 	mMatrixGenerator = new MatrixTexture;
     mMatrixGenerator->initialize(mFBOWidth, mFBOHeight);
 	mMatrixGenerator->resize(mFBOWidth, mFBOHeight);
-
 }
 
 void Scene::shutdown()
@@ -80,6 +139,10 @@ void Scene::shutdown()
     mMatrixGenerator->shutdown();
     delete mMatrixGenerator;
 
+	for (std::vector<glsh::Mesh*>::iterator meshItr = mMeshes.begin(); meshItr != mMeshes.end(); meshItr++) {
+		//mMeshes.erase(meshItr);
+		delete *meshItr;
+	}
     // FIXME: cleanup
 }
 
@@ -132,31 +195,30 @@ void Scene::draw()
     glsh::SetShaderUniform("u_ProjectionMatrix", projMatrix);
 
     // set lighting parameters
-    glm::vec3 lightDir(1.0f, 3.0f, 2.0f);           // direction to light in world space
+    glm::vec3 lightDir(0.0f, 3.0f, 3.0f);			// direction to light in world space
     lightDir = glm::mat3(viewMatrix) * lightDir;    // direction to light in camera space
     lightDir = glm::normalize(lightDir);            // normalized for sanity
     glsh::SetShaderUniform("u_LightDir", lightDir);
     glsh::SetShaderUniform("u_LightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-
     
     //
     // draw cube
     //
     //glSamplerParameteri(mSampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);    
     //glSamplerParameteri(mSampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
-
 	
     glSamplerParameteri(mSampler, GL_TEXTURE_WRAP_S, GL_REPEAT);    
     glSamplerParameteri(mSampler, GL_TEXTURE_WRAP_T, GL_REPEAT);    
 
     glBindTexture(GL_TEXTURE_2D, mMatrixTex);
 
-    glm::mat4 T = glsh::CreateTranslation(0.0f, 5.0f, 0.0f);
-    glsh::SetShaderUniform("u_ModelviewMatrix", viewMatrix * T * mMeshRotMatrix);
+    glsh::SetShaderUniform("u_ModelviewMatrix", viewMatrix * mMeshRotMatrix);
     glsh::SetShaderUniform("u_NormalMatrix", glm::mat3(viewMatrix * mMeshRotMatrix));
 
-    mMesh->draw();
-    
+	for (unsigned int i = 0; i < mMeshes.size(); i++) {
+		mMeshes[i]->draw();
+	}
+	
 	GLSH_CHECK_GL_ERRORS("drawing");
 }
 

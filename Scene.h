@@ -10,34 +10,34 @@
 
 class Scene : public glsh::App {
 
-    GLuint                  mUColorProgram;
-    GLuint                  mTexProgram;
-    GLuint                  mTexTintProgram;
+    GLuint							mUColorProgram;
+    GLuint							mTexProgram;
+    GLuint							mTexTintProgram;
 
-    glsh::Mesh*             mMesh;
-    glm::mat4               mMeshRotMatrix;
+    std::vector<glsh::Mesh*>        mMeshes;
+    glm::mat4						mMeshRotMatrix;
 
-    glsh::FreeLookCamera*   mCamera;
+    glsh::FreeLookCamera*			mCamera;
 
-    GLuint                  mSampler;   
+    GLuint							mSampler;   
 
-    MatrixTexture*          mMatrixGenerator;     
-    bool                    mGame2Paused;
+    MatrixTexture*					mMatrixGenerator;     
+    bool							mGame2Paused;
 
-    GLsizei                 mFBOWidth, mFBOHeight;
-    GLuint                  mFBO;
+    GLsizei							mFBOWidth, mFBOHeight;
+    GLuint							mFBO;
 
-	GLuint					mMatrixTex;
+	GLuint							mMatrixTex;
 
 public:
-                            Scene();
-                            ~Scene();
+									Scene();
+									~Scene();
 
-    void                    initialize(int w, int h)    override;
-    void                    shutdown()                  override;
-    void                    resize(int w, int h)        override;
-    void                    draw()                      override;
-    bool                    update(float dt)            override;
+    void							initialize(int w, int h)    override;
+    void							shutdown()                  override;
+    void							resize(int w, int h)        override;
+    void							draw()                      override;
+    bool							update(float dt)            override;
 };
 
 #endif
