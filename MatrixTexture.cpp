@@ -35,10 +35,10 @@ void MatrixTexture::initialize(int w, int h)
 
 	glGenSamplers(1, &mSampler);
 
-	mFont = glsh::CreateFont("fonts/Consolas15");
+	mFont = glsh::CreateFont("fonts/Consolas13");
 
     // create symbol table
-	mSymTableWidth = w / (int)mFont->getWidth();
+	mSymTableWidth = w / (int)mFont->getWidth() * 1.5f;
 	mSymTableHeight = h / (int)mFont->getHeight();
 
 	mSymbolTable = new char*[mSymTableHeight];
@@ -47,17 +47,13 @@ void MatrixTexture::initialize(int w, int h)
 		mSymbolTable[i] = new char[mSymTableWidth];
 	}
 
-	std::string str;
-	for (int i = 0; i < mSymTableHeight; i++)
+	for (int i = 0; i < mSymTableHeight; i++) // rows
 	{
-		for (int j = 0; j < mSymTableWidth; j++)
+		for (int j = 0; j < mSymTableWidth; j++) // column
 		{
-			str += mSymbolTable[i][j] = 'x';
+			mSymbolTable[i][j] = ' ';
 		}
-		str += "\n";
 	}
-
-    mTextBatch.SetText(mFont, str, true);
 
 	glsh::InitRandom();  // initialize random number generator
 
@@ -109,6 +105,16 @@ void MatrixTexture::draw()
 
 bool MatrixTexture::update(float dt)
 {
+	static float timer = 0.3f;
+
+	if (timer > 0.1f)
+	{
+		UpdateSymTable();
+		timer = 0;
+	}
+
+	timer += dt;
+
 	GLSH_CHECK_GL_ERRORS("updating");
     return true;
 }
@@ -128,4 +134,42 @@ void MatrixTexture::DrawTextArea(const glsh::TextBatch& textBatch, const glm::ve
     textBatch.DrawGeometry();
 
 	GLSH_CHECK_GL_ERRORS("text drawing");
+}
+
+void MatrixTexture::UpdateSymTable()
+{
+	static std::string str;
+	static std::array<char, 17> symbols = { '~', '{', '@', '?', '%', '^', '&', '#', '`', ']', ':', '\'', '*', '>', '(' };
+
+	str = "";
+	for (int i = mSymTableHeight - 1; i > -1; i--) // rows
+	{
+		for (int j = 0; j < mSymTableWidth; j++) // column
+		{
+			if (i == 0)
+			{
+				str += mSymbolTable[i][j] = symbols[rand() % symbols.size()];
+			}
+			else if (j == 0)
+			{
+				str += mSymbolTable[i][j] = '\n';
+			}
+			else
+			{
+				str += mSymbolTable[i][j] = mSymbolTable[i - 1][j];
+			}
+		}
+		str += "\n";
+	}
+
+	//for (int i = 0; i < mSymTableHeight; i++) // rows
+	//{
+	//	for (int j = 0; j < mSymTableWidth; j++) // column
+	//	{
+	//		mSymbolTable[i][j] = ' ';
+	//	}
+	//}
+
+	//mTextBatch.SetText(mFont, str, true);
+	mTextBatch.SetText(mFont, mSymbolTable, mSymTableWidth, mSymTableHeight, true);
 }

@@ -198,8 +198,8 @@ void Scene::draw()
     glm::vec3 lightDir(0.0f, 3.0f, 3.0f);			// direction to light in world space
     lightDir = glm::mat3(viewMatrix) * lightDir;    // direction to light in camera space
     lightDir = glm::normalize(lightDir);            // normalized for sanity
-    glsh::SetShaderUniform("u_LightDir", lightDir);
-    glsh::SetShaderUniform("u_LightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+    //glsh::SetShaderUniform("u_LightDir", lightDir);
+    //glsh::SetShaderUniform("u_LightColor", glm::vec3(1.0f, 1.0f, 1.0f));
     
     //
     // draw cube
@@ -213,7 +213,7 @@ void Scene::draw()
     glBindTexture(GL_TEXTURE_2D, mMatrixTex);
 
     glsh::SetShaderUniform("u_ModelviewMatrix", viewMatrix * mMeshRotMatrix);
-    glsh::SetShaderUniform("u_NormalMatrix", glm::mat3(viewMatrix * mMeshRotMatrix));
+    //glsh::SetShaderUniform("u_NormalMatrix", glm::mat3(viewMatrix * mMeshRotMatrix));
 
 	for (unsigned int i = 0; i < mMeshes.size(); i++) {
 		mMeshes[i]->draw();

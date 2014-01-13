@@ -1,6 +1,8 @@
 #ifndef GAME_2_H_
 #define GAME_2_H_
 
+#include <array>
+
 #include "GLSH.h"
 
 class MatrixTexture : public glsh::App {
@@ -33,6 +35,8 @@ private:
 	void					DrawTextArea(const glsh::TextBatch& textBatch,
                                          const glm::vec2& pos,  // position of top-left corner in screen space
                                          const glm::vec4& textColor);
+
+	void					UpdateSymTable();
     
 };
 

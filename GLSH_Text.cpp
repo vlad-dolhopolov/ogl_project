@@ -211,6 +211,79 @@ void TextBatch::SetText(const Font* font, const std::string& text, bool fixedWid
     }
 }
 
+void TextBatch::SetText(const Font* font, char** text, const int w, const int h, bool fixedWidth)
+{
+	Clear();
+
+    if (font && font->IsLoaded()) {
+        mFont = font;
+
+        float x = 0;
+        float y = 0;
+
+        float maxX = 0;  // used to figure out width
+
+        float fontHeight = font->getHeight();
+        float fontWidth = font->getWidth();
+
+        // line spacing
+        float lineSpacing = 0;
+        //float lineSpacing = 0.1f * fontHeight;
+        float dy = fontHeight + lineSpacing;
+
+		for (int i = 0; i < h; i++) // rows
+		{
+			for (int j = 0; j < w; j++) // column
+			{
+				char c = text[i][j];
+
+				if (c == '\n') {
+
+					x = 0;
+					y -= dy;
+
+				} else if (font->hasChar(c)) {
+					const TexRect& cRect = font->getCharRect(c);
+
+					float xOffset;
+					if (fixedWidth) {
+						// center this character
+						xOffset = std::floor(0.5f * (fontWidth - cRect.w));
+					} else {
+						xOffset = 0;
+					}
+
+					float x1 = x + xOffset;
+					float x2 = x1 + cRect.w;
+					float y1 = y;
+					float y2 = y1 - cRect.h;
+
+					mVerts.push_back(VPT(x1, y1, 0,  cRect.uLeft, cRect.vTop));        // top-left
+					mVerts.push_back(VPT(x1, y2, 0,  cRect.uLeft, cRect.vBottom));     // bottom-left
+					mVerts.push_back(VPT(x2, y2, 0,  cRect.uRight, cRect.vBottom));    // bottom-right
+
+					mVerts.push_back(VPT(x2, y2, 0,  cRect.uRight, cRect.vBottom));    // bottom-right
+					mVerts.push_back(VPT(x2, y1, 0,  cRect.uRight, cRect.vTop));       // top-right
+					mVerts.push_back(VPT(x1, y1, 0,  cRect.uLeft, cRect.vTop));        // top-left
+
+					if (fixedWidth) {
+						x += fontWidth;
+					} else {
+						x += cRect.w;
+					}
+
+					if (x > maxX) {
+						maxX = x;
+					}
+				}
+
+				mWidth = maxX;
+				mHeight = -(y - fontHeight);
+			}
+		}
+	}
+}
+
 void TextBatch::SetText(const Font* font, const std::vector<std::string>& textLines)
 {
     Clear();

@@ -60,6 +60,7 @@ public:
                             TextBatch();
 
     void                    SetText(const Font* font, const std::string& text, bool fixedWidth = false);
+	void                    SetText(const Font* font, char** text, const int w, const int h, bool fixedWidth = false);
     void                    SetText(const Font* font, const std::vector<std::string>& textLines);
 
     void                    Clear();
