@@ -22,6 +22,7 @@ class MatrixTexture : public glsh::App {
 	char**					mSymbolTable;
 
 	std::array<char, 25>	mSymbols;
+	bool*					mGapes;
 	
 public:
                             MatrixTexture();

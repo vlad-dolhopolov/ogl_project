@@ -228,7 +228,6 @@ void TextBatch::SetText(const Font* font, char** text, const int w, const int h,
 
         // line spacing
         float lineSpacing = 0;
-        //float lineSpacing = 0.1f * fontHeight;
         float dy = fontHeight + lineSpacing;
 
 		for (int i = 0; i < h; i++) // rows
@@ -239,8 +238,7 @@ void TextBatch::SetText(const Font* font, char** text, const int w, const int h,
 
 				if (c == '\n') {
 
-					x = 0;
-					y -= dy;
+					x += fontWidth;
 
 				} else if (font->hasChar(c)) {
 					const TexRect& cRect = font->getCharRect(c);
@@ -280,6 +278,8 @@ void TextBatch::SetText(const Font* font, char** text, const int w, const int h,
 				mWidth = maxX;
 				mHeight = -(y - fontHeight);
 			}
+			x = 0;
+			y -= dy;
 		}
 	}
 }

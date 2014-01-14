@@ -7,6 +7,7 @@ MatrixTexture::MatrixTexture()
 	, mSymTableWidth(0)
 	, mSymTableHeight(0)
 	, mSymbolTable(nullptr)
+	, mGapes(nullptr)
 {
 }
 
@@ -35,10 +36,10 @@ void MatrixTexture::initialize(int w, int h)
 
 	glGenSamplers(1, &mSampler);
 
-	mFont = glsh::CreateFont("fonts/mcode12");
+	mFont = glsh::CreateFont("fonts/mcode17");
 
     // create symbol table
-	mSymTableWidth = w / (int)mFont->getWidth() + 2;
+	mSymTableWidth = w / (int)mFont->getWidth() + 1;
 	mSymTableHeight = h / (int)mFont->getHeight() + 2;
 
 	mSymbolTable = new char*[mSymTableHeight];
@@ -51,6 +52,13 @@ void MatrixTexture::initialize(int w, int h)
 	for (int i = 0, s = 97; i < mSymbols.size(); i++)
 	{
 		mSymbols[i] = s++;
+	}
+
+	// gapes array defaults
+	mGapes = new bool[mSymTableWidth];
+	for (int i = 0; i < mSymTableWidth; i++)
+	{
+		mGapes[i] = false;
 	}
 
 	glsh::InitRandom();  // initialize random number generator
@@ -136,28 +144,11 @@ void MatrixTexture::DrawTextArea(const glsh::TextBatch& textBatch, const glm::ve
 
 void MatrixTexture::UpdateSymTable()
 {
-	for (int i = mSymTableHeight - 1; i > -1; i--) // rows
+	for (int j = 0; j < mSymTableWidth; j++) // column
 	{
-		for (int j = 0; j < mSymTableWidth; j++) // column
+		for (int i = mSymTableHeight - 1; i > -1; i--) // rows
 		{
-			/*
-			int rowBreakStart = rand() % mSymTableHeight;
-			int rowBreakStop  = rand() % mSymTableHeight;
-
-			bool gape = (i > rowBreakStart) ? true : ((i > rowBreakStart) ? false : true );
-			*/
-
-			mSymbolTable[i][j] = (j == mSymTableWidth - 1) ? '\n' : (i == 0) ? mSymbols[rand() % mSymbols.size()] : mSymbolTable[i - 1][j];
-
-			// same shit
-			/*mSymbolTable[i][j] = (i == 0) ? mSymbols[rand() % mSymbols.size()] : mSymbolTable[i - 1][j];
-
-			if (j == mSymTableWidth - 1)
-			{
-				mSymbolTable[i][j] = '\n';
-			}*/
-
-			
+			mSymbolTable[i][j] = (i == 0) ? mSymbols[rand() % mSymbols.size()] : mSymbolTable[i - 1][j];
 		}
 	}
 

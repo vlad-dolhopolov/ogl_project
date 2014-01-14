@@ -7,12 +7,38 @@
 #include <vector>
 #include <iostream>
 
+struct MinFilter {
+    GLint           mode;
+    const char*     modeStr;
+    float           anisotropy;
+    const char*     descr;
+};
+
+struct MagFilter {
+    GLint           mode;
+    const char*     modeStr;
+    const char*     descr;
+};
+
+const MinFilter g_minFilters[] = {
+    { GL_NEAREST,               "GL_NEAREST",               1.0f,   "Nearest, no mipmaps"       },
+    { GL_LINEAR,                "GL_LINEAR",                1.0f,   "Bilinear, no mipmaps"      },
+    { GL_LINEAR_MIPMAP_NEAREST, "GL_LINEAR_MIPMAP_NEAREST", 1.0f,   "Bilinear, nearest mipmap"  },
+    { GL_LINEAR_MIPMAP_LINEAR,  "GL_LINEAR_MIPMAP_LINEAR",  1.0f,   "Trilinear"                 },
+    { GL_LINEAR_MIPMAP_LINEAR,  "GL_LINEAR_MIPMAP_LINEAR",  2.0f,   "Anisotropic x2"            },
+    { GL_LINEAR_MIPMAP_LINEAR,  "GL_LINEAR_MIPMAP_LINEAR",  4.0f,   "Anisotropic x4"            },
+    { GL_LINEAR_MIPMAP_LINEAR,  "GL_LINEAR_MIPMAP_LINEAR",  8.0f,   "Anisotropic x8"            },
+    { GL_LINEAR_MIPMAP_LINEAR,  "GL_LINEAR_MIPMAP_LINEAR", 16.0f,   "Anisotropic x16"           },
+};
+const int g_numMinFilters = sizeof(g_minFilters) / sizeof(g_minFilters[0]);
+
 Scene::Scene()
     : mTexProgram(0)
     , mCamera(NULL)
     , mSampler(0)
     , mMatrixGenerator(NULL)
     , mGame2Paused(false)
+	, mMinFilterIndex(0)
 {
 }
 
@@ -26,7 +52,6 @@ void Scene::initialize(int w, int h)
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
-
     glEnable(GL_CULL_FACE);
 
     // load shaders
@@ -106,7 +131,10 @@ void Scene::initialize(int w, int h)
 
 	mActiveMeshes = mCreatedMeshes;
 
+	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &mMaxAnisotropy);
+
     glGenSamplers(1, &mSampler);
+	ApplyFilteringSettings(mSampler);
 
     mCamera = new glsh::FreeLookCamera(this);
     mCamera->setPosition(0.0f, 1.0f, 7.0f);
@@ -219,7 +247,7 @@ void Scene::draw()
     glSamplerParameteri(mSampler, GL_TEXTURE_WRAP_S, GL_REPEAT);    
     glSamplerParameteri(mSampler, GL_TEXTURE_WRAP_T, GL_REPEAT);    
 
-    glBindTexture(GL_TEXTURE_2D, mMatrixTex);
+    //glBindTexture(GL_TEXTURE_2D, mMatrixTex);
 
     glsh::SetShaderUniform("u_ModelviewMatrix", viewMatrix * mMeshRotMatrix);
 
@@ -330,7 +358,43 @@ bool Scene::update(float dt)
 		mActiveMeshes = mLoadedMeshes;
     }
 
+	bool filteringChanged = false;
+	// cycle through minification filters
+    if (kb->keyPressed(glsh::KC_9)) {
+        if (mMinFilterIndex < g_numMinFilters - 1 && g_minFilters[mMinFilterIndex + 1].anisotropy <= mMaxAnisotropy) {
+            ++mMinFilterIndex;
+        } else {
+            mMinFilterIndex = 0;
+        }
+        filteringChanged = true;
+    }
+    if (kb->keyPressed(glsh::KC_0)) {
+        if (mMinFilterIndex > 0) {
+            --mMinFilterIndex;
+        } else {
+            mMinFilterIndex = g_numMinFilters - 1;
+        }
+        filteringChanged = true;
+    }
+
+	//
+    // update our texture sampler
+    //
+    if (filteringChanged) {
+        ApplyFilteringSettings(mSampler);
+    }
+
     mCamera->update(dt);
 
     return true; // request to keep going
+}
+
+void Scene::ApplyFilteringSettings(GLuint sampler)
+{
+    // get current settings
+    const MinFilter& minFilter = g_minFilters[mMinFilterIndex];
+    
+    // configure the sampler
+    glSamplerParameteri(sampler, GL_TEXTURE_MIN_FILTER, minFilter.mode);
+    glSamplerParameterf(sampler, GL_TEXTURE_MAX_ANISOTROPY_EXT, minFilter.anisotropy);
 }

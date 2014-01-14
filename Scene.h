@@ -33,6 +33,9 @@ class Scene : public glsh::App {
 
 	GLuint							mMatrixTex;
 
+	int								mMinFilterIndex;    // minification filter index
+	float							mMaxAnisotropy;     // max supported anisotropy
+
 public:
 									Scene();
 									~Scene();
@@ -42,6 +45,8 @@ public:
     void							resize(int w, int h)        override;
     void							draw()                      override;
     bool							update(float dt)            override;
+
+	void							ApplyFilteringSettings(GLuint sampler);
 };
 
 #endif
