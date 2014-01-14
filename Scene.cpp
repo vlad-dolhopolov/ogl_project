@@ -35,75 +35,82 @@ void Scene::initialize(int w, int h)
     mTexTintProgram = glsh::BuildShaderProgram("shaders/TexNoLight-vs.glsl", "shaders/TexTintNoLight-fs.glsl");
 
     // create mesh geometry
-	//mMesh = glsh::CreateTexturedCube(5.0f);
+	// create textured cube
+	mCreatedMeshes.push_back(glsh::CreateTexturedCube(2.5f));
 
+	// load geometry from OBJ file
+	mLoadedMeshes.push_back(LoadWavefrontOBJ("models/hall.obj"));
+
+	// procedurally generate a room from textured qauds
 	std::vector<glsh::VPNT> vertices;
-	float unitLength = 2.5f; // lenght of the side of one quad
-	float hallWidth = 7.5f; // width of the hall
+	float unitLength = 1.0f; // lenght of the side of one quad; should not be modified!
+	int roomWidth = 3; // width of the room; can be modified just for fun
 
 	// far wall
-	for (int i = 0; i < 4; i+=2) {
-		vertices.push_back(glsh::VPNT(-unitLength - unitLength * i, -unitLength, 0.0f, 0, 0, 1, 0, 0));
-		vertices.push_back(glsh::VPNT(unitLength - unitLength * i, -unitLength, 0.0f, 0, 0, 1, 1, 0));
-		vertices.push_back(glsh::VPNT(-unitLength - unitLength * i, unitLength, 0.0f, 0, 0, 1, 0, 1));
-		vertices.push_back(glsh::VPNT(unitLength - unitLength * i, unitLength, 0.0f, 0, 0, 1, 1, 1));
+	for (int i = 1; i < roomWidth; i++) {
+		vertices.push_back(glsh::VPNT(0.0f - unitLength * i, 0.0f, 0.0f, 0, 0, 1, 0, 0));
+		vertices.push_back(glsh::VPNT(0.0f + unitLength * i, 0.0f, 0.0f, 0, 0, 1, 1, 0));
+		vertices.push_back(glsh::VPNT(0.0f - unitLength * i, 2 * unitLength, 0.0f, 0, 0, 1, 0, 1));
+		vertices.push_back(glsh::VPNT(0.0f + unitLength * i, 2 * unitLength, 0.0f, 0, 0, 1, 1, 1));
 
-		mMeshes.push_back(glsh::CreateMesh(GL_TRIANGLE_STRIP, vertices));
+		mGeneratedMeshes.push_back(glsh::CreateMesh(GL_TRIANGLE_STRIP, vertices));
 		vertices.clear();
 	}
 
 	// right wall
-	for (int i = 0; i < 4; i+=2) {
-		vertices.push_back(glsh::VPNT(unitLength, -unitLength, -unitLength - unitLength * i + hallWidth, -1, 0, 0, 0, 0));
-		vertices.push_back(glsh::VPNT(unitLength, -unitLength, unitLength - unitLength * i + hallWidth, -1, 0, 0, 1, 0));
-		vertices.push_back(glsh::VPNT(unitLength, unitLength, -unitLength - unitLength * i + hallWidth, -1, 0, 0, 0, 1));
-		vertices.push_back(glsh::VPNT(unitLength, unitLength, unitLength - unitLength * i + hallWidth, -1, 0, 0, 1, 1));
+	for (int i = 0; i < roomWidth; i++) {
+		vertices.push_back(glsh::VPNT(roomWidth - unitLength, 0.0f, unitLength * i, -1, 0, 0, 0, 0));
+		vertices.push_back(glsh::VPNT(roomWidth - unitLength, 0.0f, unitLength * i + unitLength, -1, 0, 0, 1, 0));
+		vertices.push_back(glsh::VPNT(roomWidth - unitLength, 2 * unitLength, unitLength * i, -1, 0, 0, 0, 1));
+		vertices.push_back(glsh::VPNT(roomWidth - unitLength, 2 * unitLength, unitLength * i + unitLength, -1, 0, 0, 1, 1));
 
-		mMeshes.push_back(glsh::CreateMesh(GL_TRIANGLE_STRIP, vertices));
+		mGeneratedMeshes.push_back(glsh::CreateMesh(GL_TRIANGLE_STRIP, vertices));
 		vertices.clear();
 	}
 
 	// left wall
-	for (int i = 0; i < 4; i+=2) {
-		vertices.push_back(glsh::VPNT(-hallWidth, -unitLength, unitLength - unitLength * i + hallWidth, 1, 0, 0, 0, 0));
-		vertices.push_back(glsh::VPNT(-hallWidth, -unitLength, -unitLength - unitLength * i + hallWidth, 1, 0, 0, 1, 0));
-		vertices.push_back(glsh::VPNT(-hallWidth, unitLength, unitLength - unitLength * i + hallWidth, 1, 0, 0, 0, 1));
-		vertices.push_back(glsh::VPNT(-hallWidth, unitLength, -unitLength - unitLength * i + hallWidth, 1, 0, 0, 1, 1));
+	for (int i = 0; i < roomWidth; i++) {
+		vertices.push_back(glsh::VPNT(-roomWidth + unitLength, 0.0f, unitLength * i + unitLength, 1, 0, 0, 0, 0));
+		vertices.push_back(glsh::VPNT(-roomWidth + unitLength, 0.0f, unitLength * i, 1, 0, 0, 1, 0));
+		vertices.push_back(glsh::VPNT(-roomWidth + unitLength, 2 * unitLength, unitLength * i + unitLength, 1, 0, 0, 0, 1));
+		vertices.push_back(glsh::VPNT(-roomWidth + unitLength, 2 * unitLength, unitLength * i, 1, 0, 0, 1, 1));
 
-		mMeshes.push_back(glsh::CreateMesh(GL_TRIANGLE_STRIP, vertices));
+		mGeneratedMeshes.push_back(glsh::CreateMesh(GL_TRIANGLE_STRIP, vertices));
 		vertices.clear();
 	}
 
 	// floor
-	for (int i = 0; i < 4; i+=2) {
-		for(int j = 0; j < 4; j+=2) {
-			vertices.push_back(glsh::VPNT(-hallWidth + unitLength * i, -unitLength, 2 * unitLength + unitLength * j, 0, 1, 0, 0, 0));
-			vertices.push_back(glsh::VPNT(-unitLength + unitLength * i, -unitLength, 2 * unitLength + unitLength * j, 0, 1, 0, 1, 0));
-			vertices.push_back(glsh::VPNT(-hallWidth + unitLength * i, -unitLength, 0.0f + unitLength * j, 0, 1, 0, 0, 1));
-			vertices.push_back(glsh::VPNT(-unitLength + unitLength * i, -unitLength, 0.0f + unitLength * j, 0, 1, 0, 1, 1));
-			mMeshes.push_back(glsh::CreateMesh(GL_TRIANGLE_STRIP, vertices));
+	for (int i = 1; i < roomWidth + 1; i++) {
+		for(int j = 0; j < roomWidth - 1; j++) {
+			vertices.push_back(glsh::VPNT(-roomWidth + unitLength * i, 0.0f, 2 * unitLength + unitLength * j, 0, 1, 0, 0, 0));
+			vertices.push_back(glsh::VPNT(-unitLength + unitLength * i, 0.0f, 2 * unitLength + unitLength * j, 0, 1, 0, 1, 0));
+			vertices.push_back(glsh::VPNT(-roomWidth + unitLength * i, 0.0f, 0.0f + unitLength * j, 0, 1, 0, 0, 1));
+			vertices.push_back(glsh::VPNT(-unitLength + unitLength * i, 0.0f, 0.0f + unitLength * j, 0, 1, 0, 1, 1));
+			mGeneratedMeshes.push_back(glsh::CreateMesh(GL_TRIANGLE_STRIP, vertices));
 			vertices.clear();
 		}
 	}
 
 	// ceeling
-	for (int i = 0; i < 4; i+=2) {
-		for(int j = 0; j < 4; j+=2) {
-			vertices.push_back(glsh::VPNT(-hallWidth + unitLength * i, unitLength, 0.0f + unitLength * j, 0, -1, 0, 0, 0));
-			vertices.push_back(glsh::VPNT(-unitLength + unitLength * i, unitLength, 0.0f + unitLength * j, 0, -1, 0, 1, 0));
-			vertices.push_back(glsh::VPNT(-hallWidth + unitLength * i, unitLength, 2 * unitLength + unitLength * j, 0, -1, 0, 0, 1));
-			vertices.push_back(glsh::VPNT(-unitLength + unitLength * i, unitLength, 2 * unitLength + unitLength * j, 0, -1, 0, 1, 1));
+	for (int i = 1; i < roomWidth + 1; i++) {
+		for(int j = 0; j < roomWidth - 1; j++) {
+			vertices.push_back(glsh::VPNT(-roomWidth + unitLength * i, 2 * unitLength, 0.0f + unitLength * j, 0, -1, 0, 0, 0));
+			vertices.push_back(glsh::VPNT(-unitLength + unitLength * i, 2 * unitLength, 0.0f + unitLength * j, 0, -1, 0, 1, 0));
+			vertices.push_back(glsh::VPNT(-roomWidth + unitLength * i, 2 * unitLength, 2 * unitLength + unitLength * j, 0, -1, 0, 0, 1));
+			vertices.push_back(glsh::VPNT(-unitLength + unitLength * i, 2 * unitLength, 2 * unitLength + unitLength * j, 0, -1, 0, 1, 1));
 
-			mMeshes.push_back(glsh::CreateMesh(GL_TRIANGLE_STRIP, vertices));
+			mGeneratedMeshes.push_back(glsh::CreateMesh(GL_TRIANGLE_STRIP, vertices));
 			vertices.clear();
 		}
 	}
 
+	mActiveMeshes = mCreatedMeshes;
+
     glGenSamplers(1, &mSampler);
 
     mCamera = new glsh::FreeLookCamera(this);
-    mCamera->setPosition(-2.5, 0.0f, 17.5f);
-    mCamera->lookAt(-2.5, 0.0f, 0);
+    mCamera->setPosition(0.0f, 1.0f, 7.0f);
+    mCamera->lookAt(0.0f, 1.0f, 0.0f);
     mCamera->setSpeed(2.0f);
 
 	//
@@ -139,7 +146,17 @@ void Scene::shutdown()
     mMatrixGenerator->shutdown();
     delete mMatrixGenerator;
 
-	for (std::vector<glsh::Mesh*>::iterator meshItr = mMeshes.begin(); meshItr != mMeshes.end(); meshItr++) {
+	for (std::vector<glsh::Mesh*>::iterator meshItr = mCreatedMeshes.begin(); meshItr != mCreatedMeshes.end(); meshItr++) {
+		//mMeshes.erase(meshItr);
+		delete *meshItr;
+	}
+
+	for (std::vector<glsh::Mesh*>::iterator meshItr = mGeneratedMeshes.begin(); meshItr != mGeneratedMeshes.end(); meshItr++) {
+		//mMeshes.erase(meshItr);
+		delete *meshItr;
+	}
+
+	for (std::vector<glsh::Mesh*>::iterator meshItr = mLoadedMeshes.begin(); meshItr != mLoadedMeshes.end(); meshItr++) {
 		//mMeshes.erase(meshItr);
 		delete *meshItr;
 	}
@@ -198,14 +215,6 @@ void Scene::draw()
     glm::vec3 lightDir(0.0f, 3.0f, 3.0f);			// direction to light in world space
     lightDir = glm::mat3(viewMatrix) * lightDir;    // direction to light in camera space
     lightDir = glm::normalize(lightDir);            // normalized for sanity
-    //glsh::SetShaderUniform("u_LightDir", lightDir);
-    //glsh::SetShaderUniform("u_LightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-    
-    //
-    // draw cube
-    //
-    //glSamplerParameteri(mSampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);    
-    //glSamplerParameteri(mSampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
 	
     glSamplerParameteri(mSampler, GL_TEXTURE_WRAP_S, GL_REPEAT);    
     glSamplerParameteri(mSampler, GL_TEXTURE_WRAP_T, GL_REPEAT);    
@@ -213,10 +222,9 @@ void Scene::draw()
     glBindTexture(GL_TEXTURE_2D, mMatrixTex);
 
     glsh::SetShaderUniform("u_ModelviewMatrix", viewMatrix * mMeshRotMatrix);
-    //glsh::SetShaderUniform("u_NormalMatrix", glm::mat3(viewMatrix * mMeshRotMatrix));
 
-	for (unsigned int i = 0; i < mMeshes.size(); i++) {
-		mMeshes[i]->draw();
+	for (unsigned int i = 0; i < mActiveMeshes.size(); i++) {
+		mActiveMeshes[i]->draw();
 	}
 	
 	GLSH_CHECK_GL_ERRORS("drawing");
@@ -304,6 +312,22 @@ bool Scene::update(float dt)
         // only one valid mipmap level for now
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+    }
+
+	// choose geometry
+	// draw primitive meshes
+	if (kb->keyPressed(glsh::KC_1)) {
+		mActiveMeshes = mCreatedMeshes;
+    }
+
+	// draw procedurally generated geometry
+	if (kb->keyPressed(glsh::KC_2)) {
+		mActiveMeshes = mGeneratedMeshes;
+    }
+
+	// draw geometry loaded from OBJ file
+	if (kb->keyPressed(glsh::KC_3)) {
+		mActiveMeshes = mLoadedMeshes;
     }
 
     mCamera->update(dt);

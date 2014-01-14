@@ -14,7 +14,11 @@ class Scene : public glsh::App {
     GLuint							mTexProgram;
     GLuint							mTexTintProgram;
 
-    std::vector<glsh::Mesh*>        mMeshes;
+	std::vector<glsh::Mesh*>        mCreatedMeshes; // simple geometry created using GLSH functions
+    std::vector<glsh::Mesh*>        mGeneratedMeshes; // procedurally generated geometry
+	std::vector<glsh::Mesh*>        mLoadedMeshes; // geometry loaded from OBJ file
+	std::vector<glsh::Mesh*>        mActiveMeshes; // meshes which need to be drawn
+
     glm::mat4						mMeshRotMatrix;
 
     glsh::FreeLookCamera*			mCamera;
