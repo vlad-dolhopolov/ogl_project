@@ -47,6 +47,7 @@ public:
     bool							update(float dt)            override;
 
 	void							ApplyFilteringSettings(GLuint sampler);
+	void							generateGeometry();
 };
 
 #endif
