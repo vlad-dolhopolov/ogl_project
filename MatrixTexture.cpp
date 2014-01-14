@@ -35,24 +35,22 @@ void MatrixTexture::initialize(int w, int h)
 
 	glGenSamplers(1, &mSampler);
 
-	mFont = glsh::CreateFont("fonts/Consolas13");
+	mFont = glsh::CreateFont("fonts/mcode12");
 
     // create symbol table
-	mSymTableWidth = w / (int)mFont->getWidth() * 1.5f;
-	mSymTableHeight = h / (int)mFont->getHeight();
+	mSymTableWidth = w / (int)mFont->getWidth() + 2;
+	mSymTableHeight = h / (int)mFont->getHeight() + 2;
 
 	mSymbolTable = new char*[mSymTableHeight];
 	for (int i = 0; i < mSymTableHeight; i++)
 	{
 		mSymbolTable[i] = new char[mSymTableWidth];
 	}
-
-	for (int i = 0; i < mSymTableHeight; i++) // rows
+	
+	// fill allowed symbol array
+	for (int i = 0, s = 97; i < mSymbols.size(); i++)
 	{
-		for (int j = 0; j < mSymTableWidth; j++) // column
-		{
-			mSymbolTable[i][j] = ' ';
-		}
+		mSymbols[i] = s++;
 	}
 
 	glsh::InitRandom();  // initialize random number generator
@@ -105,7 +103,7 @@ void MatrixTexture::draw()
 
 bool MatrixTexture::update(float dt)
 {
-	static float timer = 0.3f;
+	static float timer = 0.1f;
 
 	if (timer > 0.1f)
 	{
@@ -138,38 +136,30 @@ void MatrixTexture::DrawTextArea(const glsh::TextBatch& textBatch, const glm::ve
 
 void MatrixTexture::UpdateSymTable()
 {
-	static std::string str;
-	static std::array<char, 17> symbols = { '~', '{', '@', '?', '%', '^', '&', '#', '`', ']', ':', '\'', '*', '>', '(' };
-
-	str = "";
 	for (int i = mSymTableHeight - 1; i > -1; i--) // rows
 	{
 		for (int j = 0; j < mSymTableWidth; j++) // column
 		{
-			if (i == 0)
+			/*
+			int rowBreakStart = rand() % mSymTableHeight;
+			int rowBreakStop  = rand() % mSymTableHeight;
+
+			bool gape = (i > rowBreakStart) ? true : ((i > rowBreakStart) ? false : true );
+			*/
+
+			mSymbolTable[i][j] = (j == mSymTableWidth - 1) ? '\n' : (i == 0) ? mSymbols[rand() % mSymbols.size()] : mSymbolTable[i - 1][j];
+
+			// same shit
+			/*mSymbolTable[i][j] = (i == 0) ? mSymbols[rand() % mSymbols.size()] : mSymbolTable[i - 1][j];
+
+			if (j == mSymTableWidth - 1)
 			{
-				str += mSymbolTable[i][j] = symbols[rand() % symbols.size()];
-			}
-			else if (j == 0)
-			{
-				str += mSymbolTable[i][j] = '\n';
-			}
-			else
-			{
-				str += mSymbolTable[i][j] = mSymbolTable[i - 1][j];
-			}
+				mSymbolTable[i][j] = '\n';
+			}*/
+
+			
 		}
-		str += "\n";
 	}
 
-	//for (int i = 0; i < mSymTableHeight; i++) // rows
-	//{
-	//	for (int j = 0; j < mSymTableWidth; j++) // column
-	//	{
-	//		mSymbolTable[i][j] = ' ';
-	//	}
-	//}
-
-	//mTextBatch.SetText(mFont, str, true);
 	mTextBatch.SetText(mFont, mSymbolTable, mSymTableWidth, mSymTableHeight, true);
 }

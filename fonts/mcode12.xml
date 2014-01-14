@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<fontMetrics file="mcode12.png">
+  <character key="97">
+    <x>8</x>
+    <y>8</y>
+    <width>6</width>
+    <height>12</height>
+  </character>
+  <character key="98">
+    <x>22</x>
+    <y>8</y>
+    <width>5</width>
+    <height>12</height>
+  </character>
+  <character key="99">
+    <x>35</x>
+    <y>8</y>
+    <width>5</width>
+    <height>12</height>
+  </character>
+  <character key="100">
+    <x>48</x>
+    <y>8</y>
+    <width>5</width>
+    <height>12</height>
+  </character>
+  <character key="101">
+    <x>61</x>
+    <y>8</y>
+    <width>5</width>
+    <height>12</height>
+  </character>
+  <character key="102">
+    <x>74</x>
+    <y>8</y>
+    <width>6</width>
+    <height>12</height>
+  </character>
+  <character key="103">
+    <x>88</x>
+    <y>8</y>
+    <width>6</width>
+    <height>12</height>
+  </character>
+  <character key="104">
+    <x>102</x>
+    <y>8</y>
+    <width>6</width>
+    <height>12</height>
+  </character>
+  <character key="105">
+    <x>116</x>
+    <y>8</y>
+    <width>4</width>
+    <height>12</height>
+  </character>
+  <character key="106">
+    <x>128</x>
+    <y>8</y>
+    <width>5</width>
+    <height>12</height>
+  </character>
+  <character key="107">
+    <x>141</x>
+    <y>8</y>
+    <width>6</width>
+    <height>12</height>
+  </character>
+  <character key="108">
+    <x>155</x>
+    <y>8</y>
+    <width>6</width>
+    <height>12</height>
+  </character>
+  <character key="109">
+    <x>169</x>
+    <y>8</y>
+    <width>6</width>
+    <height>12</height>
+  </character>
+  <character key="110">
+    <x>183</x>
+    <y>8</y>
+    <width>6</width>
+    <height>12</height>
+  </character>
+  <character key="111">
+    <x>197</x>
+    <y>8</y>
+    <width>6</width>
+    <height>12</height>
+  </character>
+  <character key="112">
+    <x>211</x>
+    <y>8</y>
+    <width>7</width>
+    <height>12</height>
+  </character>
+  <character key="113">
+    <x>8</x>
+    <y>28</y>
+    <width>6</width>
+    <height>12</height>
+  </character>
+  <character key="114">
+    <x>22</x>
+    <y>28</y>
+    <width>7</width>
+    <height>12</height>
+  </character>
+  <character key="115">
+    <x>37</x>
+    <y>28</y>
+    <width>6</width>
+    <height>12</height>
+  </character>
+  <character key="116">
+    <x>51</x>
+    <y>28</y>
+    <width>7</width>
+    <height>12</height>
+  </character>
+  <character key="117">
+    <x>66</x>
+    <y>28</y>
+    <width>5</width>
+    <height>12</height>
+  </character>
+  <character key="118">
+    <x>79</x>
+    <y>28</y>
+    <width>7</width>
+    <height>12</height>
+  </character>
+  <character key="119">
+    <x>94</x>
+    <y>28</y>
+    <width>6</width>
+    <height>12</height>
+  </character>
+  <character key="120">
+    <x>108</x>
+    <y>28</y>
+    <width>6</width>
+    <height>12</height>
+  </character>
+  <character key="121">
+    <x>122</x>
+    <y>28</y>
+    <width>6</width>
+    <height>12</height>
+  </character>
+  <character key="122">
+    <x>136</x>
+    <y>28</y>
+    <width>6</width>
+    <height>12</height>
+  </character>
+</fontMetrics>

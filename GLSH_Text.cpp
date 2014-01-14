@@ -233,7 +233,7 @@ void TextBatch::SetText(const Font* font, char** text, const int w, const int h,
 
 		for (int i = 0; i < h; i++) // rows
 		{
-			for (int j = 0; j < w; j++) // column
+			for (int j = 0; j < w; j++) // columns
 			{
 				char c = text[i][j];
 

@@ -20,6 +20,8 @@ class MatrixTexture : public glsh::App {
 	int						mSymTableWidth;
 	int						mSymTableHeight;
 	char**					mSymbolTable;
+
+	std::array<char, 25>	mSymbols;
 	
 public:
                             MatrixTexture();
