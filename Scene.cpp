@@ -343,7 +343,7 @@ void Scene::generateGeometry() {
 
 	std::vector<glsh::VPNT> vertices;
 	float unitLength = 1.0f; // lenght of the side of one quad; should not be modified!
-	int roomWidth = 3; // width of the room; can be modified just for fun
+	int roomWidth = 4; // width of the room; can be modified just for fun
 
 	// far wall
 	for (int i = 0; i < roomWidth - 1; i++) {
@@ -387,7 +387,7 @@ void Scene::generateGeometry() {
 	}
 
 	// floor
-	for (int i = 1; i < roomWidth + 2; i++) {
+	for (int i = 1; i < roomWidth * 2 - 1; i++) {
 		for(int j = 0; j < roomWidth - 1; j++) {
 
 			vertices.push_back(glsh::VPNT(-roomWidth	 + unitLength * i, 0.0f, 2 * unitLength + unitLength * j, 0, 1, 0, 0.5f, 0));
@@ -401,7 +401,7 @@ void Scene::generateGeometry() {
 	}
 
 	// ceeling
-	for (int i = 1; i < roomWidth + 2; i++) {
+	for (int i = 1; i < roomWidth * 2 - 1; i++) {
 		for(int j = 0; j < roomWidth - 1; j++) {
 			vertices.push_back(glsh::VPNT(-roomWidth + unitLength * i, 2 * unitLength, 0.0f + unitLength * j, 0, -1, 0, 0.5, 0));
 			vertices.push_back(glsh::VPNT(-roomWidth + unitLength * i + unitLength, 2 * unitLength, 0.0f + unitLength * j, 0, -1, 0, 1, 0));
