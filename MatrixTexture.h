@@ -22,7 +22,7 @@ class MatrixTexture : public glsh::App {
 	char**					mSymbolTable;
 
 	std::array<char, 25>	mSymbols;
-	bool*					mGapes;
+	int*					mGapes;
 	
 public:
                             MatrixTexture();
@@ -40,6 +40,7 @@ private:
                                          const glm::vec4& textColor);
 
 	void					UpdateSymTable();
+	char					PreviousChar(int row, int column);
     
 };
 

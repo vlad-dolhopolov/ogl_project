@@ -236,7 +236,7 @@ void TextBatch::SetText(const Font* font, char** text, const int w, const int h,
 			{
 				char c = text[i][j];
 
-				if (c == '\n') {
+				if (c == ' ') {
 
 					x += fontWidth;
 
