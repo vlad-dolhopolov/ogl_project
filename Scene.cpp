@@ -74,7 +74,7 @@ void Scene::initialize(int w, int h)
 	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &mMaxAnisotropy);
 
     glGenSamplers(1, &mSampler);
-	ApplyFilteringSettings(mSampler);
+	applyFilteringSettings(mSampler);
 
     mCamera = new glsh::FreeLookCamera(this);
     mCamera->setPosition(0.0f, 1.0f, 7.0f);
@@ -115,20 +115,19 @@ void Scene::shutdown()
     delete mMatrixGenerator;
 
 	for (std::vector<glsh::Mesh*>::iterator meshItr = mCreatedMeshes.begin(); meshItr != mCreatedMeshes.end(); meshItr++) {
-		//mMeshes.erase(meshItr);
 		delete *meshItr;
 	}
+	mCreatedMeshes.clear();
 
 	for (std::vector<glsh::Mesh*>::iterator meshItr = mGeneratedMeshes.begin(); meshItr != mGeneratedMeshes.end(); meshItr++) {
-		//mMeshes.erase(meshItr);
 		delete *meshItr;
 	}
+	mGeneratedMeshes.clear();
 
 	for (std::vector<glsh::Mesh*>::iterator meshItr = mLoadedMeshes.begin(); meshItr != mLoadedMeshes.end(); meshItr++) {
-		//mMeshes.erase(meshItr);
 		delete *meshItr;
 	}
-    // FIXME: cleanup
+	mLoadedMeshes.clear();
 }
 
 void Scene::resize(int w, int h)
@@ -148,7 +147,7 @@ void Scene::draw()
 
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);    // bind framebuffer object (FBO)
     glViewport(0, 0, mFBOWidth, mFBOHeight);    // match viewport to FBO size
-    mMatrixGenerator->draw();                        // render to FBO
+    mMatrixGenerator->draw();                   // render to FBO
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);       // unbind FBO
 
@@ -179,17 +178,12 @@ void Scene::draw()
     glsh::SetShaderUniformInt("u_TexSampler", 0);
     glsh::SetShaderUniform("u_ProjectionMatrix", projMatrix);
 
-    // set lighting parameters
-    glm::vec3 lightDir(0.0f, 3.0f, 3.0f);			// direction to light in world space
-    lightDir = glm::mat3(viewMatrix) * lightDir;    // direction to light in camera space
-    lightDir = glm::normalize(lightDir);            // normalized for sanity
-	
     glSamplerParameteri(mSampler, GL_TEXTURE_WRAP_S, GL_REPEAT);    
     glSamplerParameteri(mSampler, GL_TEXTURE_WRAP_T, GL_REPEAT);    
 
-    //glBindTexture(GL_TEXTURE_2D, mMatrixTex);
-
     glsh::SetShaderUniform("u_ModelviewMatrix", viewMatrix * mMeshRotMatrix);
+
+	//calculateFrustum(projMatrix, viewMatrix * mMeshRotMatrix);
 
 	for (unsigned int i = 0; i < mActiveMeshes.size(); i++) {
 		mActiveMeshes[i]->draw();
@@ -321,7 +315,7 @@ bool Scene::update(float dt)
     // update our texture sampler
     //
     if (filteringChanged) {
-        ApplyFilteringSettings(mSampler);
+        applyFilteringSettings(mSampler);
     }
 
     mCamera->update(dt);
@@ -329,7 +323,7 @@ bool Scene::update(float dt)
     return true; // request to keep going
 }
 
-void Scene::ApplyFilteringSettings(GLuint sampler)
+void Scene::applyFilteringSettings(GLuint sampler)
 {
     // get current settings
     const MinFilter& minFilter = g_minFilters[mMinFilterIndex];
@@ -412,4 +406,123 @@ void Scene::generateGeometry() {
 			vertices.clear();
 		}
 	}
+}
+
+void Scene::calculateFrustum(glm::mat4 projMatrix, glm::mat4 mdvMatrix) {
+
+	float t = 0.0f;
+
+	clippingMatrix[0].r = mdvMatrix[0].r * projMatrix[0].r + mdvMatrix[0].g * projMatrix[1].r +
+						mdvMatrix[0].b * projMatrix[2].r + mdvMatrix[0].a * projMatrix[3].r;
+
+	clippingMatrix[0].g = mdvMatrix[0].r * projMatrix[0].g + mdvMatrix[0].g * projMatrix[1].g +
+						mdvMatrix[0].b * projMatrix[2].g + mdvMatrix[0].a * projMatrix[3].g;
+
+	clippingMatrix[0].b = mdvMatrix[0].r * projMatrix[0].b + mdvMatrix[0].g * projMatrix[1].b +
+						mdvMatrix[0].b * projMatrix[2].b + mdvMatrix[0].a * projMatrix[3].b;
+
+	clippingMatrix[0].a = mdvMatrix[0].r * projMatrix[0].a + mdvMatrix[0].g * projMatrix[1].a +
+						mdvMatrix[0].b * projMatrix[2].a + mdvMatrix[0].a * projMatrix[3].a;
+
+	clippingMatrix[1].r = mdvMatrix[1].r * projMatrix[0].r + mdvMatrix[1].g * projMatrix[1].r +
+						mdvMatrix[1].b * projMatrix[2].r + mdvMatrix[1].a * projMatrix[3].r;
+
+	clippingMatrix[1].g = mdvMatrix[1].r * projMatrix[0].g + mdvMatrix[1].g * projMatrix[1].g +
+						mdvMatrix[1].b * projMatrix[2].g + mdvMatrix[1].a * projMatrix[3].g;
+
+	clippingMatrix[1].b = mdvMatrix[1].r * projMatrix[0].b + mdvMatrix[1].g * projMatrix[1].b +
+						mdvMatrix[1].b * projMatrix[2].b + mdvMatrix[1].a * projMatrix[3].b;
+
+	clippingMatrix[2].a = mdvMatrix[1].r * projMatrix[0].a + mdvMatrix[1].g * projMatrix[1].a +
+						mdvMatrix[1].b * projMatrix[2].a + mdvMatrix[1].a * projMatrix[3].a;
+
+	clippingMatrix[2].r = mdvMatrix[2].r * projMatrix[0].r + mdvMatrix[2].g * projMatrix[1].r +
+						mdvMatrix[2].b * projMatrix[2].r + mdvMatrix[2].a * projMatrix[3].r;
+
+	clippingMatrix[2].g = mdvMatrix[2].r * projMatrix[0].g + mdvMatrix[2].g * projMatrix[1].g +
+						mdvMatrix[2].b * projMatrix[2].g + mdvMatrix[2].a * projMatrix[3].g;
+
+	clippingMatrix[2].b = mdvMatrix[2].r * projMatrix[0].b + mdvMatrix[2].g * projMatrix[1].b +
+						 mdvMatrix[2].b * projMatrix[2].b + mdvMatrix[2].a * projMatrix[3].b;
+
+	clippingMatrix[3].a = mdvMatrix[2].r * projMatrix[0].a + mdvMatrix[2].g * projMatrix[1].a +
+						 mdvMatrix[2].b * projMatrix[2].a + mdvMatrix[2].a * projMatrix[3].a;
+
+	clippingMatrix[3].r = mdvMatrix[3].r * projMatrix[0].r + mdvMatrix[3].g * projMatrix[1].r +
+						 mdvMatrix[3].b * projMatrix[2].r + mdvMatrix[3].a * projMatrix[3].r;
+
+	clippingMatrix[3].g = mdvMatrix[3].r * projMatrix[0].g + mdvMatrix[3].g * projMatrix[1].g +
+						 mdvMatrix[3].b * projMatrix[2].g + mdvMatrix[3].a * projMatrix[3].g;
+
+	clippingMatrix[3].b = mdvMatrix[3].r * projMatrix[0].b + mdvMatrix[3].g * projMatrix[1].b +
+						 mdvMatrix[3].b * projMatrix[2].b + mdvMatrix[3].a * projMatrix[3].b;
+
+	clippingMatrix[3].a = mdvMatrix[3].r * projMatrix[0].a + mdvMatrix[3].g * projMatrix[1].a +
+						 mdvMatrix[3].b * projMatrix[2].a + mdvMatrix[3].a * projMatrix[3].a;
+
+	frustum[0][0] = clippingMatrix[0].a - clippingMatrix[0].r;
+	frustum[0][1] = clippingMatrix[1].a - clippingMatrix[1].r;
+	frustum[0][2] = clippingMatrix[2].a - clippingMatrix[2].r;
+	frustum[0][3] = clippingMatrix[3].a - clippingMatrix[3].r;
+
+	t = sqrt( frustum[0][0] * frustum[0][0] + frustum[0][1] * frustum[0][1] + frustum[0][2] * frustum[0][2] );
+	frustum[0][0] /= t;
+	frustum[0][1] /= t;
+	frustum[0][2] /= t;
+	frustum[0][3] /= t;
+
+	frustum[1][0] = clippingMatrix[0].a + clippingMatrix[0].r;
+	frustum[1][1] = clippingMatrix[1].a + clippingMatrix[1].r;
+	frustum[1][2] = clippingMatrix[2].a + clippingMatrix[2].r;
+	frustum[1][3] = clippingMatrix[3].a + clippingMatrix[3].r;
+
+	t = sqrt( frustum[1][0] * frustum[1][0] + frustum[1][1] * frustum[1][1] + frustum[1][2] * frustum[1][2] );
+	frustum[1][0] /= t;
+	frustum[1][1] /= t;
+	frustum[1][2] /= t;
+	frustum[1][3] /= t;
+
+	frustum[2][0] = clippingMatrix[0].a + clippingMatrix[0].g;
+	frustum[2][1] = clippingMatrix[1].a + clippingMatrix[1].g;
+	frustum[2][2] = clippingMatrix[2].a + clippingMatrix[2].g;
+	frustum[2][3] = clippingMatrix[3].a + clippingMatrix[3].g;
+
+	t = sqrt( frustum[2][0] * frustum[2][0] + frustum[2][1] * frustum[2][1] + frustum[2][2] * frustum[2][2] );
+	frustum[2][0] /= t;
+	frustum[2][1] /= t;
+	frustum[2][2] /= t;
+	frustum[2][3] /= t;
+
+	frustum[3][0] = clippingMatrix[0].a - clippingMatrix[0].g;
+	frustum[3][1] = clippingMatrix[1].a - clippingMatrix[1].g;
+	frustum[3][2] = clippingMatrix[2].a - clippingMatrix[2].g;
+	frustum[3][3] = clippingMatrix[3].a - clippingMatrix[3].g;
+
+	t = sqrt( frustum[3][0] * frustum[3][0] + frustum[3][1] * frustum[3][1] + frustum[3][2] * frustum[3][2] );
+	frustum[3][0] /= t;
+	frustum[3][1] /= t;
+	frustum[3][2] /= t;
+	frustum[3][3] /= t;
+
+	frustum[4][0] = clippingMatrix[0].a - clippingMatrix[0].b;
+	frustum[4][1] = clippingMatrix[1].a - clippingMatrix[1].b;
+	frustum[4][2] = clippingMatrix[2].a - clippingMatrix[2].b;
+	frustum[4][3] = clippingMatrix[3].a - clippingMatrix[3].b;
+
+	t = sqrt( frustum[4][0] * frustum[4][0] + frustum[4][1] * frustum[4][1] + frustum[4][2] * frustum[4][2] );
+	frustum[4][0] /= t;
+	frustum[4][1] /= t;
+	frustum[4][2] /= t;
+	frustum[4][3] /= t;
+
+	frustum[5][0] = clippingMatrix[0].a + clippingMatrix[0].b;
+	frustum[5][1] = clippingMatrix[1].a + clippingMatrix[1].b;
+	frustum[5][2] = clippingMatrix[2].a + clippingMatrix[2].b;
+	frustum[5][3] = clippingMatrix[3].a + clippingMatrix[3].b;
+
+	t = sqrt( frustum[5][0] * frustum[5][0] + frustum[5][1] * frustum[5][1] + frustum[5][2] * frustum[5][2] );
+	frustum[5][0] /= t;
+	frustum[5][1] /= t;
+	frustum[5][2] /= t;
+	frustum[5][3] /= t;
 }
