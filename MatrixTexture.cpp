@@ -1,6 +1,6 @@
 #include "MatrixTexture.h"
 
-MatrixTexture::MatrixTexture() 
+MatrixTexture::MatrixTexture(std::string fontName) 
 	: mTextTintProgram(0)
 	, mFont(nullptr)
 	, mSampler(0)
@@ -8,6 +8,7 @@ MatrixTexture::MatrixTexture()
 	, mSymTableHeight(0)
 	, mSymbolTable(nullptr)
 	, mGapes(nullptr)
+	, mFontName(fontName)
 {
 }
 
@@ -36,7 +37,7 @@ void MatrixTexture::initialize(int w, int h)
 
 	glGenSamplers(1, &mSampler);
 
-	mFont = glsh::CreateFont("fonts/mcode17");
+	mFont = glsh::CreateFont(mFontName);
 
     // create symbol table
 	mSymTableWidth = w / (int)mFont->getWidth() + 1;

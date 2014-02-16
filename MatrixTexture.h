@@ -11,6 +11,7 @@ class MatrixTexture : public glsh::App {
 
 	glsh::Font*             mFont;
 	glsh::TextBatch         mTextBatch;
+	std::string				mFontName;
 
 	GLuint                  mSampler;
 
@@ -25,7 +26,7 @@ class MatrixTexture : public glsh::App {
 	int*					mGapes;
 	
 public:
-                            MatrixTexture();
+                            MatrixTexture(std::string fontName);
                             ~MatrixTexture();
 
     void                    initialize(int w, int h)    override;

@@ -104,7 +104,7 @@ void Scene::initialize(int w, int h)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);  // unbind for now
     
 
-	mMatrixGenerator = new MatrixTexture;
+	mMatrixGenerator = new MatrixTexture("fonts/mcode17");
     mMatrixGenerator->initialize(mFBOWidth, mFBOHeight);
 	mMatrixGenerator->resize(mFBOWidth, mFBOHeight);
 }
